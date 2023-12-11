@@ -39,23 +39,26 @@ const LoginPage = () => {
   }
 
   return (
-    <View>
+    <View style={ styles.container }>
       <Text>Iniciar Sesión</Text>
       <TextInput
         placeholder="usuario"
         value={usuario}
         onChangeText={(text) => setUsuario(text)}
+        style={styles.inputs}
       />
       <TextInput
         placeholder="contraseña"
         secureTextEntry
         value={clave}
         onChangeText={(text) => setClave(text)}
+        style={styles.inputs}
       />
       <TouchableOpacity
         onPress={handleBtnIngresar}
+        style={styles.buttonIngresar}
       >
-        <Text>Ingresar</Text>
+        <Text style={styles.textoBoton} >Ingresar</Text>
       </TouchableOpacity>
     </View>
   );
@@ -63,4 +66,30 @@ const LoginPage = () => {
 
 export default LoginPage;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  inputs: {
+    width: "80%",
+    height: 40,
+    borderColor: "gray",
+    borderWidth: 1,
+    margin: 10,
+    paddingLeft: 10,
+    paddingRight: 10,
+  },
+  buttonIngresar: {
+    width: "80%",
+    height: 40,
+    backgroundColor: "green",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  textoBoton: {
+    color: "white",
+    uppercase: true,
+  }
+});

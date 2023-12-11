@@ -2,6 +2,7 @@ import { Modal, StyleSheet, Text, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { TouchableOpacity } from "react-native";
+import Svg, { Path } from "react-native-svg";
 
 const HomeProfesor = () => {
   const usuarioEncontrado = useLocalSearchParams();
@@ -38,14 +39,32 @@ const HomeProfesor = () => {
   }, []);
 
   return (
-    <View>
+    <View style={ styles.container } >
       <TouchableOpacity onPress={() => setModalUsuario(true)}>
-        <Text>Usuario</Text>
-      </TouchableOpacity>
-      <Text>HomeProfesor</Text>
-      <Text>Buenos días, profesor(a) {profesor.nombre}</Text>
-      <Text>Clases</Text>
       <View>
+          <Svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="icon icon-tabler icon-tabler-menu-2"
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            strokeWidth="1.5"
+            stroke="#000000"
+            fill="none"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          >
+            <Path stroke="none" d="M0 0h24v24H0z" fill="none" />
+            <Path d="M4 6l16 0" />
+            <Path d="M4 12l16 0" />
+            <Path d="M4 18l16 0" />
+          </Svg>
+        </View>
+      </TouchableOpacity>
+      <Text style={styles.titulo}>Gestor de tareas</Text>
+      <Text>Buenos días, profesor(a) {profesor.nombre}</Text>
+      <Text style={styles.subtitulo}>Clases</Text>
+      <View style={styles.contenedorTareasPendientes}>
         {clases.length !== 0 ? (
           clases.map((clase) => (
             <TouchableOpacity
@@ -57,9 +76,9 @@ const HomeProfesor = () => {
                 });
               }}
             >
-              <View>
-                <Text>{clase["nombre"]}</Text>
-                <Text>Tareas asignadas: {tareasProfesor.length}</Text>
+              <View style={styles.containerTarea}>
+                <Text style={styles.textoBlanco}>{clase["nombre"]}</Text>
+                <Text style={styles.textoBlanco}>Tareas asignadas: {tareasProfesor.length}</Text>
               </View>
             </TouchableOpacity>
           ))
@@ -102,4 +121,55 @@ const HomeProfesor = () => {
 
 export default HomeProfesor;
 
-const styles = StyleSheet.create({});
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+  },
+  titulo: {
+    fontSize: 20,
+    fontWeight: "bold",
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  subtitulo: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginTop: 10,
+  },
+  contenedorTareasPendientes: {
+    width: "100%",
+    // esquinas redondeadas
+    borderRadius: 10,
+    padding: 10,
+    backgroundColor: "#0000ab",
+  },
+  contenedorTareasCompletadas: {
+    width: "100%",
+    // esquinas redondeadas
+    borderRadius: 10,
+    padding: 10,
+
+    backgroundColor: "#006400",
+  },
+  textoBlanco: {
+    color: "white",
+  },
+  containerTarea: {
+    backgroundColor: "#0000ff",
+    borderRadius: 10,
+    padding: 10,
+  },
+  textoModal: {
+    marginVertical: 10,
+  },
+  botonSalir: {
+    marginTop: 50,
+    width: "50%",
+    height: 40,
+    backgroundColor: "red",
+    justifyContent: "center",
+    alignItems: "center",
+    borderRadius: 10,
+  },
+});
