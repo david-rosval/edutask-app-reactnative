@@ -44,7 +44,7 @@ const HomeEstudiante = () => {
         <Text>Usuario</Text>
       </TouchableOpacity>
       <Text>Tus tareas</Text>
-      <Text>Buenos días, alumno {estudiante.nombre}</Text>
+      <Text>Buenos días, alumno(a) {estudiante.nombre}</Text>
       <Text>Tareas Pendientes</Text>
       <View>
         {tareas.length !== 0 ? (
