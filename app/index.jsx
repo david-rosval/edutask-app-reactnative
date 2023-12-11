@@ -26,9 +26,15 @@ const LoginPage = () => {
     )
     console.log(usuarioEncontrado);
     if (usuarioEncontrado.rol === "estudiante") {
-        router.push("estudiante/home")
+        router.push({
+            pathname: "estudiante/home",
+            params: usuarioEncontrado ,
+        })
     } else if (usuarioEncontrado.rol === "profesor") {
-        router.push("profesor/home")
+        router.push({
+            pathname: "profesor/home",
+            params: usuarioEncontrado,
+        })
     } else console.log("no se encontro el usuario");
   }
 
