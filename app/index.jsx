@@ -15,6 +15,7 @@ const LoginPage = () => {
         "https://jairodanielmt-colegiojpc2023.hf.space/usuarios"
       );
       const data = await response.json();
+      console.log(data);
       setTodosUsuarios(data);
     }
     obtenerUsuarios()
@@ -90,6 +91,5 @@ const styles = StyleSheet.create({
   },
   textoBoton: {
     color: "white",
-    uppercase: true,
   }
 });
