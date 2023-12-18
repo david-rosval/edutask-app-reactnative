@@ -39,9 +39,9 @@ const HomeProfesor = () => {
   }, []);
 
   return (
-    <View style={ styles.container } >
+    <View style={styles.container}>
       <TouchableOpacity onPress={() => setModalUsuario(true)}>
-      <View>
+        <View>
           <Svg
             xmlns="http://www.w3.org/2000/svg"
             class="icon icon-tabler icon-tabler-menu-2"
@@ -78,7 +78,9 @@ const HomeProfesor = () => {
             >
               <View style={styles.containerTarea}>
                 <Text style={styles.textoBlanco}>{clase["nombre"]}</Text>
-                <Text style={styles.textoBlanco}>Tareas asignadas: {tareasProfesor.length}</Text>
+                <Text style={styles.textoBlanco}>
+                  Tareas asignadas: {tareasProfesor.length}
+                </Text>
               </View>
             </TouchableOpacity>
           ))
@@ -93,26 +95,58 @@ const HomeProfesor = () => {
         transparent={false}
         onRequestClose={() => setModalUsuario(false)}
       >
-        <View>
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+          }}
+        >
           <TouchableOpacity onPress={() => setModalUsuario(false)}>
-            <Text>Atras</Text>
+            <Text>{"< Atras"}</Text>
           </TouchableOpacity>
-          <Text>logo usuario</Text>
-          <Text>Bienvenido:</Text>
-          <Text>{profesor.nombre}</Text>
-          <Text>DNI: {profesor.dni}</Text>
-          <Text>Correo institucional:</Text>
-          <Text>{profesor["correo"]}</Text>
-          <TouchableOpacity
-            onPress={() => {
-              setModalUsuario(false);
-              router.push({
-                pathname: "/",
-              });
+          <View
+            style={{
+              flex: 1,
+              justifyContent: "center",
+              alignItems: "center",
             }}
           >
-            <Text>Salir</Text>
-          </TouchableOpacity>
+            <View>
+              <Svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="icon icon-tabler icon-tabler-user-circle"
+                width="100"
+                height="100"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="#000000"
+                fill="none"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <Path stroke="none" d="M0 0h24v24H0z" fill="none" />
+                <Path d="M12 12m-9 0a9 9 0 1 0 18 0a9 9 0 1 0 -18 0" />
+                <Path d="M12 10m-3 0a3 3 0 1 0 6 0a3 3 0 1 0 -6 0" />
+                <Path d="M6.168 18.849a4 4 0 0 1 3.832 -2.849h4a4 4 0 0 1 3.834 2.855" />
+              </Svg>
+            </View>
+            <Text style={styles.textoModal}>Bienvenido:</Text>
+            <Text style={styles.textoModal}>Prof. {profesor.nombre}</Text>
+            <Text style={styles.textoModal}>DNI: {profesor.dni}</Text>
+            <Text style={styles.textoModal}>Correo institucional:</Text>
+            <Text style={styles.textoModal}>{profesor["correo"]}</Text>
+            <TouchableOpacity
+              onPress={() => {
+                setModalUsuario(false);
+                router.push({
+                  pathname: "/",
+                });
+              }}
+              style={styles.botonSalir}
+            >
+              <Text style={styles.textoBlanco}>Salir</Text>
+            </TouchableOpacity>
+          </View>
         </View>
       </Modal>
     </View>

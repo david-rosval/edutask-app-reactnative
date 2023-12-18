@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, Image } from "react-native";
 import React, { useEffect, useState } from "react";
 import { TextInput } from "react-native-gesture-handler";
 import { TouchableOpacity } from "react-native";
@@ -41,9 +41,16 @@ const LoginPage = () => {
 
   return (
     <View style={ styles.container }>
-      <Text>Iniciar Sesión</Text>
+      <Text style={{
+        fontSize: 30,
+        marginBottom: 50,
+        fontWeight: "bold",
+      }} >Iniciar Sesión</Text>
+      <View style={{marginBottom: 50}}>
+        <Image source={require('../assets/logo-institucion.png')} />
+      </View>
       <TextInput
-        placeholder="usuario"
+        placeholder="DNI"
         value={usuario}
         onChangeText={(text) => setUsuario(text)}
         style={styles.inputs}
@@ -72,9 +79,11 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
+    paddingLeft: 50,
+    paddingRight: 50,
   },
   inputs: {
-    width: "80%",
+    width: "100%",
     height: 40,
     borderColor: "gray",
     borderWidth: 1,
@@ -83,13 +92,19 @@ const styles = StyleSheet.create({
     paddingRight: 10,
   },
   buttonIngresar: {
-    width: "80%",
-    height: 40,
+    width: "70%",
+    height: 50,
     backgroundColor: "green",
     justifyContent: "center",
     alignItems: "center",
+    marginTop: 40,
+    borderRadius: 10,
+    paddingBottom: 10,
+    paddingTop: 10,
   },
   textoBoton: {
     color: "white",
+    textTransform: "uppercase",
+    fontSize: 20,
   }
 });

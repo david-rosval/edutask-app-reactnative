@@ -10,6 +10,9 @@ const HomeEstudiante = () => {
   const [tareas, setTareas] = useState([]);
   const [modalUsuario, setModalUsuario] = useState(false);
   const [clase, setClase] = useState({});
+  const [modalEntregarTarea, setModalEntregarTarea] = useState(false);
+  const [tareaSubir, setTareaSubir] = useState({});
+  const [selectedPDF, setSelectedPDF] = useState(null);
 
   // obtener estudiante
   useEffect(() => {
@@ -71,7 +74,12 @@ const HomeEstudiante = () => {
             tarea["estado"] === "activo" ? (
               <TouchableOpacity
                 key={tarea["idtarea"]}
-                onPress={() => console.log(tarea["idtarea"])}
+                onPress={() => {
+                  console.log(tarea);
+                  setTareaSubir(tarea);
+                  setModalEntregarTarea(true);
+                }}
+                style={{ marginBottom: 10 }}
               >
                 <View style={styles.containerTarea}>
                   <Text style={styles.textoBlanco}>
@@ -83,7 +91,9 @@ const HomeEstudiante = () => {
                 </View>
               </TouchableOpacity>
             ) : (
-              <Text>No tienes tareas pendientes</Text>
+              <Text style={{ color: "white" }}>
+                No tienes tareas pendientes
+              </Text>
             )
           )
         ) : (
@@ -92,32 +102,59 @@ const HomeEstudiante = () => {
       </View>
       <Text style={styles.subtitulo}>Tareas Completadas</Text>
       <View style={styles.contenedorTareasCompletadas}>
-        {tareas.length !== 0 ? (
-          tareas.map((tarea) =>
-            tarea["estado"] === "completado" ? (
-              <TouchableOpacity
-                onPress={() => console.log("tareas presionada")}
-                key={tarea["idtarea"]}
-              >
-                <View style={styles.containerTarea}>
-                  <Text style={styles.textoBlanco}>
-                    {tarea["nombre_tarea"]}
-                  </Text>
-                  <Text style={styles.textoBlanco}>
-                    Fecha de entrega: {tarea["fecha_vencimiento"]}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ) : (
-              <Text style={styles.textoBlanco}>
-                No has completado ninguna tarea
-              </Text>
-            )
+        {tareas.length !== 0 &&
+        tareas.some((ta) => ta["estado"] === "completado") ? (
+          tareas.map(
+            (tarea) =>
+              tarea["estado"] === "completado" && (
+                <TouchableOpacity
+                  onPress={() => console.log("tareas presionada")}
+                  key={tarea["idtarea"]}
+                >
+                  <View style={styles.containerTarea}>
+                    <Text style={styles.textoBlanco}>
+                      {tarea["nombre_tarea"]}
+                    </Text>
+                    <Text style={styles.textoBlanco}>
+                      Fecha de entrega: {tarea["fecha_vencimiento"]}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              )
           )
         ) : (
-          <Text>No Se encontraron tareas</Text>
+          <Text style={{ color: "white" }}>No Se encontraron tareas</Text>
         )}
       </View>
+
+      <Modal
+        visible={modalEntregarTarea}
+        animationType="slide"
+        transparent={false}
+        onRequestClose={() => setModalEntregarTarea(false)}
+      >
+        <View
+          style={{
+            flex: 1,
+            padding: 20,
+          }}
+        >
+          <TouchableOpacity onPress={() => setModalEntregarTarea(false)}>
+            <Text>{"< Atras"}</Text>
+          </TouchableOpacity>
+          <View style={{
+            flex:1,
+            display:"flex",
+            justifyContent:"center",
+            alignItems:"center",
+          }}>
+            <Text style={
+              styles.titulo
+            }>Entregar tarea</Text>
+            
+          </View>
+        </View>
+      </Modal>
 
       <Modal
         visible={modalUsuario}

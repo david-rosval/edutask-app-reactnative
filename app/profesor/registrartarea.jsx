@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import {
   StyleSheet,
@@ -8,44 +8,72 @@ import {
   TouchableOpacity,
 } from "react-native";
 
-const RegistrarNuevaTarea = () => {
-  const {clase, estudiantes} = useLocalSearchParams();
+const RegistrarTarea = () => {
+  const clase = useLocalSearchParams();
 
+  const [estudiantes, setEstudiantes] = useState([]);
   const [nombreTarea, setNombreTarea] = useState("");
   const [instrucciones, setInstrucciones] = useState("");
   const [fechaVencimiento, setFechaVencimiento] = useState("");
 
-  handleAgregarTarea = () => {
-    const registrarTarea = async () => {
-      const response = await fetch(
-        "https://jairodanielmt-colegiojpc2023.hf.space/tareas/comun",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            "nombre_tarea": nombreTarea,
-            "instrucciones": instrucciones,
-            "fecha_vencimiento": fechaVencimiento,
-            "idclase": clase["idclase"],
-            "estado": "activo",
-          }),
-        }
+  useEffect(() => {
+    console.log(clase);
+    const procesarEstudiantes = async () => {
+      const responseEstudiantes = await fetch(
+        "https://jairodanielmt-colegiojpc2023.hf.space/estudiantes"
       );
-      const data = await response.json();
-      console.log(data);
+      const students = await responseEstudiantes.json();
+      console.log(students);
+      setEstudiantes(students);
     };
-    registrarTarea();
-    router.push({
-      pathname: "/profesor/tareasporclase",
-      params: clase,
+    procesarEstudiantes();
+  }, []);
+
+  const registrarTarea = async (nuevaTarea) => {
+    const responseRegistro = await fetch(
+      "https://jairodanielmt-colegiojpc2023.hf.space/tareas",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevaTarea),
+      }
+    );
+    const data = await responseRegistro.json();
+    console.log(data);
+  };
+
+  handleAgregarTarea = async () => {
+    console.log("agregar tarea");
+    console.log(clase["idclase"]);
+
+    // validación de campos vacíos
+    if (nombreTarea === "" || instrucciones === "" || fechaVencimiento === "" ) {
+      alert("Todos los campos son obligatorios");
+      return;
+    }
+
+    estudiantes.forEach(async (est) => {
+      console.log(est);
+
+      const nuevaTarea = {
+        "nombre_tarea": nombreTarea,
+        "instrucciones": instrucciones,
+        "fecha_vencimiento": fechaVencimiento,
+        "idclase": clase["idclase"],
+        "idestudiante": est["idestudiante"],
+        "estado": "activo",
+      };
+      est["idclase"] === parseInt(clase["idclase"]) && await registrarTarea(nuevaTarea);
     });
+
+    alert("Tarea registrada exitosamente");
+    router.back();
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>{estudiantes[0]["nombre"]}</Text>
       <Text style={styles.clase}>Clase: {clase["nombre"]}</Text>
       <TextInput
         style={styles.input}
@@ -72,7 +100,7 @@ const RegistrarNuevaTarea = () => {
   );
 };
 
-export default RegistrarNuevaTarea;
+export default RegistrarTarea;
 
 const styles = StyleSheet.create({
   container: {

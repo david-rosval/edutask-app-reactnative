@@ -1,4 +1,11 @@
-import { StyleSheet, Text, Touchable, TouchableOpacity, View } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  Touchable,
+  TouchableOpacity,
+  View,
+  Modal,
+} from "react-native";
 import React, { useEffect, useState } from "react";
 import { router, useLocalSearchParams } from "expo-router";
 import { ScrollView } from "react-native-gesture-handler";
@@ -8,6 +15,9 @@ const TareasPorClase = () => {
   const clase = useLocalSearchParams();
   const [tareasporclase, setTareasporclase] = useState([]);
   const [estudiantes, setEstudiantes] = useState([]);
+  const [tareasInfo, setTareasInfo] = useState([]);
+  const [tarea, setTarea] = useState("");
+  const [modalEstudiantesTarea, setModalEstudiantesTarea] = useState(false);
 
   useEffect(() => {
     const procesarTareasClase = async () => {
@@ -17,52 +27,79 @@ const TareasPorClase = () => {
       const data = await response.json();
       //console.log(data);
       setTareasporclase(data);
+
+      const nombresUnicos = {};
+      data.forEach((tarea) => {
+        const nombreTarea = tarea["nombre_tarea"];
+        const fecha = tarea["fecha_vencimiento"];
+
+        // Si el nombre ya existe en el objeto nombresUnicos, incrementa la frecuencia
+        if (nombresUnicos[nombreTarea]) {
+          nombresUnicos[nombreTarea].cantidad++;
+        } else {
+          // Si el nombre no existe, crea una entrada para él
+          nombresUnicos[nombreTarea] = {
+            cantidad: 1,
+            fechaVencimiento: fecha,
+          };
+        }
+      });
+
+      // Convertir el objeto nombresUnicos en un arreglo de objetos
+      const nombresUnicosArray = Object.keys(nombresUnicos).map(
+        (nombreTarea) => ({
+          nombreTarea: nombreTarea,
+          cantidadAsignados: nombresUnicos[nombreTarea].cantidad,
+          fechaVencimiento: nombresUnicos[nombreTarea].fechaVencimiento,
+        })
+      );
+
+      // Guardar el resultado en el estado
+      setTareasInfo(nombresUnicosArray);
+
       const responseEstudiantes = await fetch(
         "https://jairodanielmt-colegiojpc2023.hf.space/estudiantes"
       );
       const students = await responseEstudiantes.json();
       setEstudiantes(students);
 
-      console.log(estudiantes);
-      console.log(tareasporclase);
+      console.log(students);
+      console.log(data);
     };
     procesarTareasClase();
   }, []);
 
   return (
     <View style={styles.container}>
+      <View>
+        <TouchableOpacity
+          onPress={() => {
+            router.back();
+          }}
+        >
+          <Text style={styles.textoModal}>{"< Atras"}</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.titulo}>{clase["nombre"]}</Text>
       <ScrollView>
-        {tareasporclase.map((tarea) => {
-          const estudiante = estudiantes.find(
-            (est) => est["idestudiante"] === tarea["idestudiante"]
-          );
-          const nombreEstudiante = estudiante ? estudiante.nombre : "";
-          const estadoTarea =
-            tarea["estado"] === "activo" ? "pendiente" : "completado";
-
+        {tareasInfo.map((tarea) => {
           return (
-            <View
-              style={
-                estadoTarea === "pendiente"
-                  ? styles.contenedorTareasPendientes
-                  : styles.contenedorTareasCompletadas
-              }
-              key={tarea["idtarea"]}
+            <TouchableOpacity
+              onPress={() => {
+                setModalEstudiantesTarea(true);
+                setTarea(tarea.nombreTarea);
+              }}
             >
               <View style={styles.containerTarea}>
-                <Text style={styles.textoTituloTarea}>
-                  {tarea["nombre_tarea"]}
+                <Text style={styles.textoTituloTarea}>{tarea.nombreTarea}</Text>
+                <Text style={styles.textoBlanco}>
+                  Asignado a {tarea.cantidadAsignados} estudiantes
                 </Text>
                 <Text style={styles.textoBlanco}>
-                  Asignado a: {nombreEstudiante}
+                  Fecha de entrega: {tarea.fechaVencimiento}
                 </Text>
-                <Text style={styles.textoBlanco}>
-                  Fecha de entrega: {tarea["fecha_vencimiento"]}
-                </Text>
-                <Text style={styles.textoBlanco}>Estado: {estadoTarea}</Text>
               </View>
-            </View>
+            </TouchableOpacity>
           );
         })}
       </ScrollView>
@@ -81,13 +118,12 @@ const TareasPorClase = () => {
             backgroundColor: "#00b341",
             padding: 5,
           }}
-          onPress={() => router.push({
-            pathname: "/profesor/registrartarea",
-            params: {
-              clase: clase,
-              estudiantes: estudiantes
-            }
-          })}
+          onPress={() =>
+            router.push({
+              pathname: "/profesor/registrartarea",
+              params: clase
+            })
+          }
         >
           <Svg
             xmlns="http://www.w3.org/2000/svg"
@@ -107,6 +143,75 @@ const TareasPorClase = () => {
           </Svg>
         </TouchableOpacity>
       </View>
+
+      {modalEstudiantesTarea && (
+        <Modal
+          visible={modalEstudiantesTarea}
+          animationType="slide"
+          transparent={false}
+          onRequestClose={() => {
+            setModalEstudiantesTarea(false);
+            setTarea("");
+          }}
+        >
+          <View
+            style={{
+              padding: 20,
+              flex: 1,
+            }}
+          >
+            <View>
+              <TouchableOpacity
+                onPress={() => {
+                  setModalEstudiantesTarea(false);
+                  setTarea("");
+                }}
+              >
+                <Text style={styles.textoModal}>{"< Atras"}</Text>
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.titulo}>Entregas</Text>
+            <ScrollView>
+              {tareasporclase.map((hw) => {
+                if (hw["nombre_tarea"] === tarea) {
+                  return (
+                    <View
+                      style={{
+                        backgroundColor: "#eeeeee",
+                        borderRadius: 10,
+                        padding: 10,
+                        marginBottom: 10,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          color: "black",
+                          fontSize: 16,
+                        }}
+                      >
+                        {
+                          estudiantes.find(
+                            (e) => e.idestudiante === hw.idestudiante
+                          ).nombre
+                        }
+                      </Text>
+                      <Text
+                        style={{
+                          color: "black",
+                          textAlign: "right",
+                          fontStyle: "italic",
+                        }}
+                      >
+                        {hw.estado === "activo" ? "Pendiente" : "Completado"}
+                      </Text>
+                    </View>
+                  );
+                }
+              })}
+            </ScrollView>
+          </View>
+        </Modal>
+      )}
     </View>
   );
 };
@@ -158,6 +263,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#0000ff",
     borderRadius: 10,
     padding: 10,
+    marginBottom: 10,
   },
   textoModal: {
     marginVertical: 10,
